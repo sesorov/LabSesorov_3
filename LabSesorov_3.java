@@ -2,16 +2,48 @@ package labsesorov_3;
 
 public class LabSesorov_3
 {
+    public static final int J_SIZE = 5;
+    public static final int I_SIZE = 5;
+    public static final int MODULE = 10;
     public static final int STACK_COUNT = 3;
     public static final int PUSH_COUNT = 10;
     public static final int POLL_COUNT = 5;
     public static final int RANDOM_RANGE = 100;
+    public static final int SORT_COUNT = 2;
+    public static final int REPLACEMENT_SIZE = 5;
+    public static final int CYCLES_COUNT = 3;
+    public static final String SORT_TYPE = "BOTH"; 
     
     public static void main(String[] args) 
     {
-        int iSize = 5;//Integer.parseInt(args[0]);
-        int jSize = 5;//Integer.parseInt(args[1]);
-        int module = 10;//Integer.parseInt(args[2]);
+        //ВВОД С КОМАНДНОЙ СТРОКИ: i-РАЗМЕР 2D МАССИВА, j-РАЗМЕР 2D МАССИВА, МОДУЛЬ ЕГО ЭЛЕМЕНТОВ, ТИП СОРТИРОВКИ ASCENDING/DESCENDING/BOTH, ПАРАМЕТРЫ ГЕНЕРАЦИИ СТЕКОВ (КОЛИЧЕСТВО СТЕКОВ, КОЛИЧЕСТВО ВСТАВОК, КОЛИЧЕСТВО ИЗВЛЕЧЕНИЙ), РАЗМЕР ПЕРЕСТАНОВКИ, КОЛИЧЕСТВО ЦИКЛОВ
+        int iSize = I_SIZE, jSize = I_SIZE, module = MODULE, stackCount = STACK_COUNT, pushCount = PUSH_COUNT, pollCount = POLL_COUNT, repSize = REPLACEMENT_SIZE, cycles = CYCLES_COUNT;
+        String type = SORT_TYPE;
+        try
+        {
+            iSize = Integer.parseInt(args[0]);
+            jSize = Integer.parseInt(args[1]);
+            module = Integer.parseInt(args[2]);
+            type = args[3];
+            stackCount = Integer.parseInt(args[4]);
+            pushCount = Integer.parseInt(args[5]);
+            pollCount = Integer.parseInt(args[6]);
+            repSize = Integer.parseInt(args[7]);
+            cycles = Integer.parseInt(args[8]);
+        }
+        catch(Exception wrongInput)
+        {
+            System.out.println("Нвеверный ввод. Будут использованы значения по умолчанию: ");
+            System.out.printf("i-РАЗМЕР 2D МАССИВА = %d%n", iSize);
+            System.out.printf("j-РАЗМЕР 2D МАССИВА = %d%n", jSize);
+            System.out.printf("МОДУЛЬ ЕГО ЭЛЕМЕНТОВ = %d%n", module);
+            System.out.println("ТИП СОРТИРОВКИ = " + type);
+            System.out.printf("КОЛИЧЕСТВО СТЕКОВ = %d%n", stackCount);
+            System.out.printf("КОЛИЧЕСТВО ВСТАВОК = %d%n", pushCount);
+            System.out.printf("КОЛИЧЕСТВО ИЗВЛЕЧЕНИЙ = %d%n", pollCount);
+            System.out.printf("РАЗМЕР ПЕРЕСТАНОВКИ = %d%n", repSize);
+            System.out.printf("КОЛИЧЕСТВО ЦИКЛОВ = %d%n", cycles);
+        }
         int[][] test = new int[iSize][jSize];
         setRandomArray(test, module);
         printArray(test);
@@ -32,11 +64,15 @@ public class LabSesorov_3
         {
             System.out.printf(" [%d][%d]", min.peek(i)[0], min.peek(i)[1]);
         }
-        
-        //printTimeSort(iSize, jSize, module, true);
-        //randomStackOperations();
-        //replacements(5);
-        //oneCycleReplacement(5, 3);
+        System.out.println();
+        System.out.println("-------СКОРОСТЬ СОРТИРОВОК-------");
+        printTimeSort(iSize, jSize, module, type);
+        System.out.println("-------ОПЕРАЦИИ СО СТЕКАМИ-------");
+        randomStackOperations(stackCount, pushCount, pollCount);
+        System.out.println("-------ПЕРЕСТАНОВКА С ПОДСЧЁТОМ ЦИКЛОВ-------");
+        replacements(repSize);
+        System.out.println("-------ПЕРЕСТАНОВКА С ПОЛЬЗОВАТЕЛЬСКИМ КОЛИЧЕСТВОМ ЦИКЛОВ-------");
+        customCycleReplacement(repSize, cycles);
     } 
     public static Stack<int[]> maxIndexes(int[][] input)
     {
@@ -83,30 +119,54 @@ public class LabSesorov_3
         return indexes;
     }
     
-    public static void printTimeSort(int iSize, int jSize, int module, boolean isAscending)
+    public static void printTimeSort(int iSize, int jSize, int module, String type)
     {
         int[][] array = new int[iSize][jSize];
         setRandomArray(array, module);
-        if (isAscending) // возрастающая
+        if (type.equals("ASCENDING")) // возрастающая
         {
-            System.out.printf("%nИсходный массив:");
+            System.out.printf("%nИсходный массив:%n");
             printArray(array);
             Thread.currentThread().setPriority(1);
             long startTime = System.nanoTime();
             sort(array, true);
-            System.out.printf("Время сортировки по возрастанию: %d%nОтсортированный массив:", (System.nanoTime() - startTime) / 1000);
+            System.out.printf("Время сортировки по возрастанию: %d%nОтсортированный массив:%n", (System.nanoTime() - startTime) / 1000);
             printArray(array);
         }
-        else // убывающая
+        else if (type.equals("DESCENDING"))// убывающая
         {
-            System.out.printf("%nИсходный массив:");
+            System.out.printf("%nИсходный массив:%n");
             printArray(array);
             Thread.currentThread().setPriority(1);
             long startTime = System.nanoTime();
             sort(array, false);
-            System.out.printf("Время сортировки по убыванию: %d%nОтсортированный массив:", (System.nanoTime() - startTime) / 1000);
+            System.out.printf("Время сортировки по убыванию: %d%nОтсортированный массив:%n", (System.nanoTime() - startTime) / 1000);
             printArray(array);
         }
+        else if (type.equals("BOTH"))
+        {
+            System.out.printf("%nИсходный массив:%n");
+            printArray(array);
+            int[][] copy = new int[iSize][jSize];
+            Operations.duplicateArray(array, copy);
+            long[] time = new long[SORT_COUNT];
+            Thread.currentThread().setPriority(1);
+            boolean sType = true;
+            for(int i = 0; i < SORT_COUNT; i++)
+            {
+                time[i] = System.nanoTime();
+                sort(array, sType);
+                time[i] = (System.nanoTime() - time[i]) / 1000;
+                System.out.println("Отсортирован по" + (sType ? " возрастанию:" : " убыванию:"));
+                printArray(array);
+                Operations.duplicateArray(copy, array);
+                sType = false;
+            }
+            System.out.printf("Сортировка по возрастанию заняла %d мкс.%n", time[0]);
+            System.out.printf("Сортировка по убыванию заняла %d мкс.%n", time[1]);
+            System.out.println("Самая быстрая для данного массива: по " + (time[0] <= time[1] ? "возрастанию." : "убыванию."));
+        }
+        else System.out.printf("%nWrong TYPE parameter. Expected: ASCENDING/DESCENDING, got: " + type);
     }
     
     public static void randomStackOperations(int stackCount, int pushCount, int pollCount)
@@ -119,6 +179,12 @@ public class LabSesorov_3
             for (int j = pushCount; j < pollCount; j++)
                 sequence[j] = 0;
             Operations.shuffle(sequence);
+            for (int operation : sequence)
+            {
+                if (operation == 0) System.out.print("ИЗВЛЕЧЕНИЕ ");
+                else System.out.print("ВСТАВКА ");
+            }
+            System.out.println();
             Stack<Integer> modifiedStack = new Stack();
             Stack<Integer> fullStack = new Stack();
             Stack<Integer> removed = new Stack();
@@ -152,11 +218,22 @@ public class LabSesorov_3
     }
     public static void randomStackOperations()
     {
+        System.out.printf("Параметры генерации не заданы или заданы неверно (количество стеков, количество вставок, количество извлечений). Использованы значения по умолчанию: %d, %d, %d%n", STACK_COUNT, PUSH_COUNT, POLL_COUNT);
         randomStackOperations(STACK_COUNT, PUSH_COUNT, POLL_COUNT);
     }
     
-    public static void oneCycleReplacement(int size, int cycleNum)
+    public static void customCycleReplacement(int size, int cycleNum)
     {
+        if (cycleNum > size)
+        {
+            System.out.println("Too many cycles. Array cannot be shuffled.");
+            return;
+        }
+        if (cycleNum < 1)
+        {
+            System.out.println("Please, use 1+ cycles. You required 0 or less.");
+            return;
+        }
         int[] aRaw = new int[size]; //transposition
         for (int i = 0; i < size;) aRaw[i] = ++i;
         int[] bRaw = new int[size]; //copy
