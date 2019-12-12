@@ -27,8 +27,13 @@ public class Operations
             System.out.println("Too many cycles. Array cannot be shuffled.");
             return;
         }
+        if (cycles < 1)
+        {
+            System.out.println("Please, use 1+ cycles. You required 0 or less.");
+            return;
+        }
         int temp[] = cycle(a, null, cycles);
-        printArray(a);
+        //printArray(a);
     }
     private static int[] cycle(int[] source, int[] temp, int cycles)
     {
@@ -90,6 +95,13 @@ public class Operations
     {
         for (int i = 0; i < from.length; i++)
             to[i] = from[i];
+    }
+    
+    public static void duplicateArray(int[][] from, int[][] to)
+    {
+        for (int i = 0; i < from.length; i++)
+            for (int j = 0; j < from[i].length; j++)
+                to[i][j] = from[i][j];
     }
     
     public static void printArray(int[] array)
