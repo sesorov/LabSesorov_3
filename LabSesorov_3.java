@@ -2,8 +2,8 @@ package labsesorov_3;
 
 public class LabSesorov_3
 {
-    public static final int J_SIZE = 5;
-    public static final int I_SIZE = 5;
+    public static final int I_SIZE = 8;
+    public static final int J_SIZE = 6;
     public static final int MODULE = 10;
     public static final int STACK_COUNT = 3;
     public static final int PUSH_COUNT = 10;
@@ -17,7 +17,7 @@ public class LabSesorov_3
     public static void main(String[] args) 
     {
         //ВВОД С КОМАНДНОЙ СТРОКИ: i-РАЗМЕР 2D МАССИВА, j-РАЗМЕР 2D МАССИВА, МОДУЛЬ ЕГО ЭЛЕМЕНТОВ, ТИП СОРТИРОВКИ ASCENDING/DESCENDING/BOTH, ПАРАМЕТРЫ ГЕНЕРАЦИИ СТЕКОВ (КОЛИЧЕСТВО СТЕКОВ, КОЛИЧЕСТВО ВСТАВОК, КОЛИЧЕСТВО ИЗВЛЕЧЕНИЙ), РАЗМЕР ПЕРЕСТАНОВКИ, КОЛИЧЕСТВО ЦИКЛОВ
-        int iSize = I_SIZE, jSize = I_SIZE, module = MODULE, stackCount = STACK_COUNT, pushCount = PUSH_COUNT, pollCount = POLL_COUNT, repSize = REPLACEMENT_SIZE, cycles = CYCLES_COUNT;
+        int iSize = I_SIZE, jSize = J_SIZE, module = MODULE, stackCount = STACK_COUNT, pushCount = PUSH_COUNT, pollCount = POLL_COUNT, repSize = REPLACEMENT_SIZE, cycles = CYCLES_COUNT;
         String type = SORT_TYPE;
         try
         {
@@ -379,9 +379,9 @@ public class LabSesorov_3
     {
         if (isAscending) //по возрастанию
         {
-            for (int i = 0; i < array[i].length - 1; i++) //перебор столбцов
-                for (int j = 0; j < array.length; j++) //перебор строк
-                if (array[i][j] > array[i + 1][j])
+            for (int i = 0; i < array.length - 1; i++) //перебор столбцов
+                for (int j = 0; j < array[0].length; j++) //перебор строк
+                    if (array[i][j] > array[i + 1][j])
                         {
                             int temp = array[i][j];
                             array[i][j] = array[i + 1][j];
@@ -392,16 +392,16 @@ public class LabSesorov_3
         }
         else // по убыванию
         {
-            for (int i = 0; i < array[i].length - 1; i++) //перебор столбцов
-                for (int j = 0; j < array.length; j++) //перебор строк
-                if (array[i][j] < array[i + 1][j])
-                    {
-                        int temp = array[i][j];
-                        array[i][j] = array[i + 1][j];
-                        array[i + 1][j] = temp;
-                        i = 0;
-                        j = -1;
-                    }
+            for (int i = 0; i < array.length - 1; i++) //перебор столбцов
+                for (int j = 0; j < array[0].length; j++) //перебор строк
+                    if (array[i][j] < array[i + 1][j])
+                        {
+                            int temp = array[i][j];
+                            array[i][j] = array[i + 1][j];
+                            array[i + 1][j] = temp;
+                            i = 0;
+                            j = -1;
+                        }
         }
     }
 }
